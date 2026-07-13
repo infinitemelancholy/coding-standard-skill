@@ -151,7 +151,7 @@ import request from '@/utils/request'
 
 ## 第4部分：Java 后端编码规范
 
-参考风格：center 类 Spring Boot 多模块项目（Controller / Service / ServiceImpl / Mapper / Entity / DTO / VO）。具体类名以当前项目为准。
+参考风格：Spring Boot 多模块项目（Controller / Service / ServiceImpl / Mapper / Entity / DTO / VO）。具体类名以当前项目为准。
 
 ### 4.1 分层职责
 
@@ -163,7 +163,7 @@ import request from '@/utils/request'
 | Entity | 表映射 | 塞大量展示逻辑 |
 | DTO / VO | 入参 / 出参 | 与 Entity 混用职责不清 |
 
-### 4.2 推荐骨架（对齐 center 习惯）
+### 4.2 推荐骨架
 
 **Controller**
 

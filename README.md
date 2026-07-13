@@ -16,7 +16,6 @@
 
 ## 安装
 
-安装本仓库全部 Skills：
 
 ```bash
 npx skills add infinitemelancholy/coding-standard

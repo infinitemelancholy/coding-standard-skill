@@ -8,11 +8,25 @@
 
 | Skill | 用途 | 来源 |
 |-------|------|------|
-| `coding-standard` | 编码规范、行尾标注、异常兜底、生成后自检 | 本仓库原创 |
+| `coding-standard` | 编码规范、异常兜底、生成后自检；行尾标注为可选 Profile | 本仓库原创 |
 | `test-driven-development` | 先失败测试再写实现（Red-Green-Refactor） | [obra/superpowers](https://github.com/obra/superpowers)（MIT） |
 | `code-simplification` | 行为不变下简化结构、提升可读性 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 
 分工：新功能/修 bug 走 TDD；能跑但难读时走简化；交付质量始终遵守 `coding-standard`。
+
+### 可选 Profile：行尾来源标注
+
+`coding-standard` 的行尾来源标注**默认关闭**（省输入/输出 token）。需要时可：
+
+1. **项目配置**：在项目根目录创建 `.coding-standard.yaml`：
+
+```yaml
+annotations: true
+```
+
+2. **口头开启**：对 Agent 说「按 coding-standard 开启标注」
+
+开启后，Agent 会按需 Read [`profiles/line-annotations.md`](skills/coding-standard/profiles/line-annotations.md) 并生成/自检行尾标注。本仓库根目录不放该配置文件，避免开发 Skill 时误开。
 
 ## 安装
 
@@ -31,7 +45,9 @@ npx skills add infinitemelancholy/coding-standard
 ```
 skills/
 ├── coding-standard/
-│   └── SKILL.md
+│   ├── SKILL.md
+│   └── profiles/
+│       └── line-annotations.md   # 可选；默认不加载
 ├── test-driven-development/
 │   ├── SKILL.md
 │   ├── testing-anti-patterns.md

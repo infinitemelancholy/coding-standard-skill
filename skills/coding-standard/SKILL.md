@@ -12,13 +12,35 @@ description: >-
 
 **开始时简短声明：**「正在按 coding-standard 生成/修改代码。」
 
+### 可选 Profile（按需加载）
+
+可选能力默认关闭；仅当开关打开时，用 Read 加载对应文件（agentskills Tier 3）。
+
+| Profile | 文件 | 默认 | 开启条件 |
+|---------|------|------|----------|
+| `line-annotations` | [`profiles/line-annotations.md`](profiles/line-annotations.md) | 关闭 | 见下方 |
+
+**加载规则（激活本 Skill 时执行）：**
+
+1. 检测项目根目录是否存在 `.coding-standard.yaml`，且 `annotations: true`
+2. 或用户口头要求开启标注（如「按 coding-standard 开启标注」）
+3. 满足任一条件 → 用 Read 加载 `profiles/line-annotations.md` 并执行其规则
+4. 否则 → **不加载**该文件，**不生成**行尾来源标注；自检跳过标注相关项
+
+项目配置示例（项目根目录）：
+
+```yaml
+annotations: true
+```
+
 ### 同仓协作 Skills（按需一并遵循）
 
 | 场景 | 使用 |
 |------|------|
 | 新功能、修 bug、改行为 | 先遵循同仓 `test-driven-development`（先失败测试再写实现） |
 | 行为已正确但难读/过复杂 | 遵循同仓 `code-simplification`（不改行为，只简化表达） |
-| 命名、分层、标注、异常、自检 | 始终遵循本 Skill |
+| 命名、分层、异常、自检 | 始终遵循本 Skill |
+| 行尾来源标注 | 仅当标注 Profile 已开启时遵循 |
 
 三者可同时生效：TDD/简化管流程与结构，本 Skill 管交付规范。
 
@@ -40,6 +62,7 @@ description: >-
 1. **先读项目现有写法**：同层同类文件的命名、分层、注解、错误处理，优先对齐现有风格（R1）
 2. **不绑定单一仓库**：规范通用；示例以 center（Java）与 Vue3+TS 为参考，落到具体项目时替换为该项目的包名/路径
 3. **写完必自检**：未走完第 7 部分检查清单，不得宣称任务完成（R7）
+4. **按需加载 Profile**：按上方「可选 Profile」规则决定是否 Read 标注规范
 
 ---
 
@@ -79,73 +102,13 @@ description: >-
 
 ---
 
-## 第3部分：注释标注规范（★核心★）
+## 第3部分：注释标注规范（可选 Profile）
 
-对**外部类 / 外部方法 / 跨模块依赖**的调用处，在**行尾或紧邻上一行**做简要标注，便于后期查阅与 Debug（R3）。
+行尾来源标注**默认关闭**。
 
-### 行尾标注格式
+**【若标注 Profile 已开启】** 用 Read 加载并遵守 [`profiles/line-annotations.md`](profiles/line-annotations.md)（格式、三要素、范围、示例均在该文件）。
 
-```text
-// [来源模块或包路径] 类名或符号名 - 作用简述，位置：相对路径或依赖坐标
-```
-
-### 标注三要素
-
-1. **来源模块**：属于哪个模块/包（如 `center-common-data`、`hutool-core`、`@/api/project`）
-2. **作用简述**：一句话说明干什么
-3. **代码位置**：仓库相对路径，或第三方依赖的明确坐标
-
-### 标注范围
-
-**必须标注：**
-
-- 跨模块业务类、公共组件、自定义注解
-- 第三方工具类的关键调用（首次出现或非显而易见处）
-- 项目内 API / Store / 工具的 import 或关键调用
-
-**可省略：**
-
-- 语言/标准库常识（如 `String`、`List`、`Optional`）
-- 同一文件内私有方法
-- 连续多行使用同一符号时，在首次出现处标注即可
-
-### Java 后端标注示例
-
-```java
-// [center-common-data] DictResolver - 字典解析器，根据 type/value 反查标签，位置：center-common/center-common-data/.../resolver/DictResolver.java
-String bizLevelName = DictResolver.getDictItemLabel("biz_level", dto.getBizLevel());
-
-// [center-common-core] CheckedException - 业务检查异常，由全局异常处理转为统一错误响应，位置：center-common/center-common-core/.../exception/CheckedException.java
-throw new CheckedException("项目ID不能为空");
-
-// [center-common-security] @HasPermission - 权限校验注解，基于 Spring Security @PreAuthorize，位置：center-common/center-common-security/.../annotation/HasPermission.java
-@HasPermission("project_projectMain_view")
-
-// [hutool-core] StrUtil - 空安全字符串工具，位置：第三方依赖 cn.hutool.core.util.StrUtil
-if (StrUtil.isBlank(dto.getProjectName())) { ... }
-
-// [center-common-core] R - 统一响应包装，位置：center-common/center-common-core/.../util/R.java
-return R.ok(result);
-```
-
-### TypeScript 前端标注示例
-
-```typescript
-// [@/api/project] getProjectList - 项目相关后端接口封装，位置：src/api/project.ts
-import { getProjectList } from '@/api/project'
-
-// [@/stores/project] useProjectStore - Pinia 项目状态，位置：src/stores/project.ts
-const projectStore = useProjectStore()
-
-// [@/utils/request] request - Axios 封装实例，位置：src/utils/request.ts
-import request from '@/utils/request'
-```
-
-### 落地注意
-
-- 路径按**当前仓库真实结构**填写；不确定时先搜索再写，禁止编造路径
-- 第三方依赖写清 `groupId`/`artifact` 或 npm 包名即可
-- 标注保持一行、信息密度高，不要写成大段文档注释
+未开启时：不生成行尾来源标注；不得因缺少此类标注判定不合格。
 
 ---
 
@@ -210,7 +173,7 @@ import request from '@/utils/request'
 - 事务方法放在 Spring 管理的 Public 方法上，避免同类自调用导致事务失效
 - 只读查询一般不加写事务；需要时可 `@Transactional(readOnly = true)`（若项目使用）
 
-### 4.6 常用框架标注速查
+### 4.6 常用框架速查
 
 | 符号 | 来源 | 作用 |
 |------|------|------|
@@ -232,7 +195,6 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    // [center-common-security] @HasPermission - 接口权限，位置：.../annotation/HasPermission.java
     @HasPermission("project_projectMain_view")
     @GetMapping("/{id}")
     public R<ProjectVO> get(@PathVariable Long id) {
@@ -251,7 +213,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Transactional(rollbackFor = Exception.class)
     public void updateProject(ProjectDTO dto) {
         if (dto.getId() == null) {
-            // [center-common-core] CheckedException - 业务校验失败，位置：.../exception/CheckedException.java
             throw new CheckedException("项目ID不能为空");
         }
         Project existing = getById(dto.getId());
@@ -268,7 +229,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
 ## 第5部分：TypeScript / Vue 前端编码规范
 
-适用于 Vue 3 + TypeScript；React 等框架时迁移原则不变：类型安全、错误兜底、职责单一、标注外部依赖。
+适用于 Vue 3 + TypeScript；React 等框架时迁移原则不变：类型安全、错误兜底、职责单一。
 
 ### 5.1 组件结构
 
@@ -286,7 +247,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 async function loadList() {
   loading.value = true
   try {
-    // [@/api/project] getProjectList - 项目列表接口，位置：src/api/project.ts
     const res = await getProjectList(query)
     list.value = res.data ?? []
   } catch (e) {
@@ -339,11 +299,10 @@ async function loadList() {
 
 ### 执行步骤
 
-1. 重读本 Skill 中与当前语言相关的章节与清单
-2. 对照下方清单逐项审查刚写的代码
-3. 发现问题立即修正
-4. 修正后再快速扫一遍
-5. 全部通过后才输出最终结果；可在回复中用极简列表说明已自检（无需长篇报告）
+1. 对照下方清单与当前语言章节审查刚写的代码（【若标注 Profile 已开启】同时对照 `profiles/line-annotations.md`）
+2. 发现问题立即修正
+3. 修正后再快速扫一遍
+4. 全部通过后才输出最终结果；可在回复中用极简列表说明已自检（无需长篇报告）
 
 ### Java 后端自检清单
 
@@ -351,7 +310,7 @@ async function loadList() {
 |--------|----------|
 | 分层正确 | Controller 只接参与包装响应；业务在 Service；数据访问在 Mapper |
 | 异常完整 | 可能为 null 的返回有处理；写操作有事务或明确错误路径 |
-| 注释标注 | 外部类/方法调用处有「来源 + 作用 + 位置」标注 |
+| 注释标注 | 【若标注 Profile 已开启】外部类/方法调用处有「来源 + 作用 + 位置」标注 |
 | 命名规范 | 与项目现有风格一致 |
 | 事务边界 | 多表写有 `@Transactional(rollbackFor = Exception.class)` |
 | 日志覆盖 | 关键步骤有 info；异常有 error/warn |
@@ -364,7 +323,7 @@ async function loadList() {
 | 类型安全 | 无无必要 `any`；Props/Emits/API 类型完整 |
 | API 错误处理 | 有 try-catch 或统一拦截，并有用户提示 |
 | 职责单一 | 复杂逻辑在 composable；组件不臃肿 |
-| 注释标注 | 关键 import / 外部调用有标注 |
+| 注释标注 | 【若标注 Profile 已开启】关键 import / 外部调用有标注 |
 | 响应式正确 | `ref`/`reactive` 使用正确；不直接改 props |
 | UI 边界 | 加载 / 空 / 错误 / 边界数据有处理 |
 
@@ -383,23 +342,31 @@ async function loadList() {
 
 ## 第8部分：扩展机制（R5 / R6）
 
-本 Skill 按章节扩展，新增规则时：
+本 Skill 按章节或 Profile 扩展，新增规则时：
 
 | 规则类型 | 添加到 |
 |----------|--------|
 | 语言无关的质量/气味规则 | 第2部分 |
-| 注释标注规则 | 第3部分 |
+| 行尾来源标注（及其他可选能力） | `profiles/` + 顶部 Profile 表 |
 | Java / Spring / MyBatis 等 | 第4部分 |
 | TS / Vue / 前端工程化 | 第5部分 |
 | 异常与安全兜底 | 第6部分 |
-| 自检项 | 第7部分 |
+| 自检项 | 第7部分（可选能力用【若 … Profile 已开启】） |
 
 ### 添加新规则的写法
 
 1. 用一句话写清**必须做什么 / 禁止做什么**
-2. 给一个**最小示例**（最好带标注格式）
+2. 给一个**最小示例**
 3. 若需 Agent 每次检查，同步在第 7 部分加一行清单
 4. 保持通用：写「模式」，项目专有类名放在示例里并注明「以当前仓库为准」
+
+### 添加新 Profile
+
+1. 在 `profiles/` 下新增一个 Markdown 文件（一层深，勿再嵌套引用）
+2. 在顶部「可选 Profile」表登记：名称、路径、默认开/关、开启条件
+3. 在第 3 部分或相关章节写清条件引用；自检与快速清单用【若 … Profile 已开启】
+4. 若需项目级开关，约定 `.coding-standard.yaml` 字段并在加载规则中写明
+5. 默认关闭除非有充分理由（避免无谓消耗输入/输出 token）
 
 ### 跨平台使用
 
@@ -416,10 +383,11 @@ async function loadList() {
 
 ## 快速执行清单（每次编码任务）
 
-1. [ ] 阅读本 Skill（至少第2、3、6、7 部分 + 对应语言章节）
-2. [ ] 查看项目同层现有代码，对齐风格
-3. [ ] 若属新功能/修 bug/改行为：按 `test-driven-development` 走 Red → Green → Refactor
-4. [ ] 实现功能（直截了当，无冗余）；需要理清结构时用 `code-simplification`
-5. [ ] 外部依赖补齐行尾标注
-6. [ ] 按第7部分自检并修正
-7. [ ] 交付最终代码
+1. [ ] 阅读本 Skill（至少第2、6、7 部分 + 对应语言章节）
+2. [ ] 按「可选 Profile」规则：需要时 Read `profiles/line-annotations.md`，否则跳过
+3. [ ] 查看项目同层现有代码，对齐风格
+4. [ ] 若属新功能/修 bug/改行为：按 `test-driven-development` 走 Red → Green → Refactor
+5. [ ] 实现功能（直截了当，无冗余）；需要理清结构时用 `code-simplification`
+6. [ ] 【若标注 Profile 已开启】外部依赖补齐行尾标注
+7. [ ] 按第7部分自检并修正
+8. [ ] 交付最终代码

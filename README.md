@@ -1,6 +1,6 @@
 # coding-standard-skill
 
-通用编码 Skill 集合：质量规范 + 测试驱动 + 代码简化，供 AI Agent 在 Cursor / TRAE / Claude Code 等环境使用。
+通用编码 Skill 集合：质量规范 + 测试驱动 + 代码简化，供 AI Agent 在 Cursor / Claude Code 等环境使用。
 
 适用于支持 [Agent Skills](https://agentskills.io/) 的工具。
 
@@ -20,20 +20,6 @@
 
 ```bash
 npx skills add infinitemelancholy/coding-standard
-```
-
-只装某一个：
-
-```bash
-npx skills add infinitemelancholy/coding-standard --skill coding-standard
-npx skills add infinitemelancholy/coding-standard --skill test-driven-development
-npx skills add infinitemelancholy/coding-standard --skill code-simplification
-```
-
-指定 Agent、全局、跳过确认示例：
-
-```bash
-npx skills add infinitemelancholy/coding-standard -a cursor -a trae -a claude-code -g -y
 ```
 
 ### 常用选项

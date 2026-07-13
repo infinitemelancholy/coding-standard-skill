@@ -21,15 +21,6 @@
 npx skills add infinitemelancholy/coding-standard
 ```
 
-### 常用选项
-
-| 命令 | 说明 |
-|------|------|
-| `-g` | 安装到用户目录（所有项目可用） |
-| `-a cursor` / `-a trae` | 只装到指定 Agent |
-| `--skill <name>` | 只安装指定 Skill |
-| `-y` | 跳过确认提示 |
-
 ## 使用
 
 - Agent 会按各 Skill 的 `description` 自动选用；也可显式 `@coding-standard` / `@test-driven-development` / `@code-simplification`

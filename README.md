@@ -1,4 +1,4 @@
-# coding-standard
+# coding-standard-skill
 
 通用编码 Skill 集合：质量规范 + 测试驱动 + 代码简化，供 AI Agent 在 Cursor / TRAE / Claude Code 等环境使用。
 

@@ -45,9 +45,17 @@ npx skills add infinitemelancholy/coding-standard
 ```
 skills/
 ├── coding-standard/
-│   ├── SKILL.md
+│   ├── SKILL.md                      # 主入口
+│   ├── shared/                       # 语言无关规范
+│   │   ├── universal.md              # 通用质量标准
+│   │   ├── exceptions.md             # 异常兜底清单
+│   │   └── self-review.md            # 自检流程
+│   ├── java/
+│   │   └── backend.md                # Java 后端规范
+│   ├── typescript/
+│   │   └── frontend.md               # Vue/TS 前端规范
 │   └── profiles/
-│       └── line-annotations.md   # 可选；默认不加载
+│       └── line-annotations.md       # 可选；默认不加载
 ├── test-driven-development/
 │   ├── SKILL.md
 │   ├── testing-anti-patterns.md

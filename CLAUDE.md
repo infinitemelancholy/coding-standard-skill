@@ -29,8 +29,17 @@
 
 ```
 skills/
+├── README.md                 # 技能索引 + 协同规则
 ├── coding-standard/
-│   ├── SKILL.md              # 核心规范（Java + TS/Vue + 通用 + 自检清单）
+│   ├── SKILL.md              # 主入口（加载规则 + Profile 机制 + 快速清单）
+│   ├── shared/
+│   │   ├── universal.md      # 通用编码质量标准（语言无关）
+│   │   ├── exceptions.md     # 异常兜底检查清单
+│   │   └── self-review.md    # Code Review 自检流程（Java + TS + 通用清单）
+│   ├── java/
+│   │   └── backend.md        # Java 后端编码规范
+│   ├── typescript/
+│   │   └── frontend.md       # TypeScript/Vue 前端编码规范
 │   └── profiles/
 │       └── line-annotations.md  # 可选：开启后才加载
 ├── test-driven-development/
@@ -45,7 +54,15 @@ skills/
 
 - 添加、删除、重命名或改变任何技能的行为后：
   - 更新顶层 `README.md` 的技能表
+  - 同步 `skills/README.md` 的索引
   - 更新 `coding-standard/SKILL.md` 中的「同仓协作 Skills」表
   - 若涉及第三方来源，同步 `THIRD_PARTY_NOTICES.md`
-- Profile 规则变更时：更新 `coding-standard/SKILL.md` 顶部的 Profile 表、加载规则和第7部分自检清单
-- 新增 Skill 时，遵循先写 SKILL.md → 更新 README → 检查协同表 → 提交的顺序
+- `coding-standard` 规则变更时：
+  - 通用质量规则 → `shared/universal.md`
+  - Java 规范 → `java/backend.md`
+  - TS/Vue 规范 → `typescript/frontend.md`
+  - 异常兜底 → `shared/exceptions.md`
+  - 自检项 → `shared/self-review.md`
+  - 可选 Profile → `profiles/` + SKILL.md 顶部 Profile 表
+- Profile 规则变更时：更新 `coding-standard/SKILL.md` 顶部的 Profile 表和加载规则
+- 新增 Skill 时，遵循先写 SKILL.md → 更新 README → 更新 skills/README.md → 检查协同表 → 提交的顺序

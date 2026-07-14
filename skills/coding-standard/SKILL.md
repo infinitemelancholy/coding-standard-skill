@@ -8,47 +8,11 @@ description: >-
 
 # 通用编码技能（Coding Standard）
 
-你是编码质量守门人。凡涉及代码生成或修改，必须先完成本 Skill，再动手；写完后必须按第 7 部分自检，通过后才可交付。
+你是编码质量守门人。凡涉及代码生成或修改，必须先完成本 Skill，再动手；写完后必须按自检清单自检，通过后才可交付。
 
 **开始时简短声明：**「正在按 coding-standard 生成/修改代码。」
 
-### 可选 Profile（按需加载）
-
-可选能力默认关闭；仅当开关打开时，用 Read 加载对应文件（agentskills Tier 3）。
-
-| Profile | 文件 | 默认 | 开启条件 |
-|---------|------|------|----------|
-| `line-annotations` | [`profiles/line-annotations.md`](profiles/line-annotations.md) | 关闭 | 见下方 |
-
-**加载规则（激活本 Skill 时执行）：**
-
-1. 检测项目根目录是否存在 `.coding-standard.yaml`，且 `annotations: true`
-2. 或用户口头要求开启标注（如「按 coding-standard 开启标注」）
-3. 满足任一条件 → 用 Read 加载 `profiles/line-annotations.md` 并执行其规则
-4. 否则 → **不加载**该文件，**不生成**行尾来源标注；自检跳过标注相关项
-
-项目配置示例（项目根目录）：
-
-```yaml
-annotations: true
-```
-
-### 同仓协作 Skills（按需一并遵循）
-
-| 场景 | 使用 |
-|------|------|
-| 新功能、修 bug、改行为 | 先遵循同仓 `test-driven-development`（先失败测试再写实现） |
-| 行为已正确但难读/过复杂 | 遵循同仓 `code-simplification`（不改行为，只简化表达） |
-| 命名、分层、异常、自检 | 始终遵循本 Skill |
-| 行尾来源标注 | 仅当标注 Profile 已开启时遵循 |
-
-三者可同时生效：TDD/简化管流程与结构，本 Skill 管交付规范。
-
----
-
-## 第1部分：技能定位与触发条件
-
-### 何时激活
+## 何时激活
 
 以下任一情况必须激活本 Skill：
 
@@ -57,318 +21,64 @@ annotations: true
 - 修复 bug、补异常处理、补注释
 - 用户说「按规范写」「生成代码」「实现某某功能」
 
-### 使用前提
+## 加载规则
 
-1. **先读项目现有写法**：同层同类文件的命名、分层、注解、错误处理，优先对齐现有风格（R1）
-2. **不绑定单一仓库**：规范通用；示例以 center（Java）与 Vue3+TS 为参考，落到具体项目时替换为该项目的包名/路径
-3. **写完必自检**：未走完第 7 部分检查清单，不得宣称任务完成（R7）
-4. **按需加载 Profile**：按上方「可选 Profile」规则决定是否 Read 标注规范
+激活时按以下顺序 Read 子文件：
 
----
+1. **必读** `shared/universal.md` —— 通用编码质量标准（禁止模式、要求模式、代码气味）
+2. **按语言选读**：
+   - Java 后端 → `java/backend.md`
+   - TypeScript / Vue 前端 → `typescript/frontend.md`
+   - 两者都涉及 → 都读
+3. **异常门槛** `shared/exceptions.md` —— 生成/修改代码前扫一遍兜底点
+4. **代码完成后必须 Read** `shared/self-review.md` 并逐项自检，通过后才可交付
 
-## 第2部分：通用编码质量标准（语言无关）
+## 可选 Profile（按需加载）
 
-目标风格：像有约 3 年全栈经验、吃透当前项目架构的中级工程师（R2）。
+可选能力默认关闭；仅当开关打开时，用 Read 加载对应文件。
 
-### 禁止模式
+| Profile | 文件 | 默认 | 开启条件 |
+|---------|------|------|----------|
+| `line-annotations` | `profiles/line-annotations.md` | 关闭 | 见下方 |
 
-| 禁止 | 说明 |
+**加载规则：**
+1. 检测项目根目录是否存在 `.coding-standard.yaml`，且 `annotations: true`
+2. 或用户口头要求开启标注（如「按 coding-standard 开启标注」）
+3. 满足任一条件 → Read 加载 `profiles/line-annotations.md` 并执行其规则
+4. 否则 → **不加载**，**不生成**行尾来源标注；自检跳过标注相关项
+
+```yaml
+# 项目根目录 .coding-standard.yaml
+annotations: true
+```
+
+## 同仓协作 Skills
+
+| 场景 | 使用 |
 |------|------|
-| 冗余封装 | 一层只转发、无业务含义的 wrapper / 过度抽象 |
-| 兜圈子实现 | 能 `Stream.filter` / `list.filter` 就不要多层 `for-if-continue` |
-| 「AI 味」代码 | 生硬命名、不自然缩写、无意义中间变量、注释复述代码 |
-| 复制粘贴膨胀 | 重复逻辑应抽私有方法或工具，而不是整段拷贝 |
-| 过早优化 | 无证据的缓存、异步、复杂设计模式 |
+| 新功能、修 bug、改行为 | 先遵循同仓 `test-driven-development`（Red → Green → Refactor） |
+| 行为已正确但难读/过复杂 | 遵循同仓 `code-simplification`（不改行为，只简化表达） |
+| 命名、分层、异常、自检 | 始终遵循本 Skill |
+| 行尾来源标注 | 仅当标注 Profile 已开启时遵循 |
 
-### 要求模式
+三者可同时生效：TDD / 简化管流程与结构，本 Skill 管交付规范。
 
-- 直截了当：每一步对应明确业务含义
-- 方法单一职责；单方法建议不超过 **50 行**（组装复杂 DTO / 构建复杂 SQL 可例外，但需分段清晰）
-- 私有方法按功能分组，用分隔注释：
+## 扩展机制
 
-```text
-// ======================== 查询辅助方法 ========================
-```
-
-- 变量名自解释；能靠命名说清的，不写废话注释
-- 优先复用项目已有工具类、基类、统一响应与异常体系
-
-### 代码气味速查
-
-- [ ] 是否有只调用一次且无复用价值的私有方法被过度拆分？
-- [ ] 是否存在可合并的连续判空 / 连续转换？
-- [ ] 是否用了项目里已有的工具却又手写了一套？
-- [ ] 控制流是否能用早期返回（guard clause）变平？
-
----
-
-## 第3部分：注释标注规范（可选 Profile）
-
-行尾来源标注**默认关闭**。
-
-**【若标注 Profile 已开启】** 用 Read 加载并遵守 [`profiles/line-annotations.md`](profiles/line-annotations.md)（格式、三要素、范围、示例均在该文件）。
-
-未开启时：不生成行尾来源标注；不得因缺少此类标注判定不合格。
-
----
-
-## 第4部分：Java 后端编码规范
-
-参考风格：Spring Boot 多模块项目（Controller / Service / ServiceImpl / Mapper / Entity / DTO / VO）。具体类名以当前项目为准。
-
-### 4.1 分层职责
-
-| 层 | 职责 | 禁止 |
-|----|------|------|
-| Controller | 参数接收、权限/日志注解、调用 Service、包装 `R` | 塞业务逻辑、直接操作 Mapper |
-| Service / ServiceImpl | 业务规则、事务、校验、编排 | 返回与协议强耦合的 Http 细节 |
-| Mapper | 数据访问 | 业务判断 |
-| Entity | 表映射 | 塞大量展示逻辑 |
-| DTO / VO | 入参 / 出参 | 与 Entity 混用职责不清 |
-
-### 4.2 推荐骨架
-
-**Controller**
-
-- `@RestController` + `@RequiredArgsConstructor` + `@RequestMapping`
-- 权限：`@HasPermission("...")`（若项目有）
-- 操作日志：`@SysLog("...")`（若项目有）
-- 返回：`R.ok(data)` / `R.failed(msg)`
-
-**ServiceImpl**
-
-- `@Service` + `@Slf4j` + `@RequiredArgsConstructor`
-- 若用 MyBatis-Plus：可继承 `ServiceImpl<Mapper, Entity>`
-- 多表写操作：`@Transactional(rollbackFor = Exception.class)`
-
-**Entity**
-
-- 继承项目 `BaseEntity<T>`（若有）
-- `@TableName` + `@Data` + `@EqualsAndHashCode(callSuper = true)`
-
-### 4.3 命名规范
-
-| 类型 | 约定 | 示例 |
-|------|------|------|
-| Controller | `XxxController` | `ProjectController` |
-| Service 接口 | `XxxService` | `ProjectService` |
-| 实现类 | `XxxServiceImpl` | `ProjectServiceImpl` |
-| Mapper | `XxxMapper` | `ProjectMapper` |
-| Entity | 业务名，不加后缀或按项目惯例 | `Project` |
-| DTO / VO / Query | `XxxDTO` / `XxxVO` / `XxxQuery` | `ProjectDTO` |
-| 方法 | 动词开头，见名知意 | `getById` / `saveProject` / `pageQuery` |
-
-命名必须**先对齐当前模块已有风格**，再套上表。
-
-### 4.4 异常处理
-
-- 业务可预期错误：`throw new CheckedException("明确中文/项目约定文案")`（或项目等价业务异常）
-- Controller 若需显式捕获：`return R.failed(e.getMessage())`；优先依赖全局异常处理
-- 不要吞异常；记录日志时带上下文（关键 id、操作名）
-- 禁止 `catch (Exception e) {}` 空块；禁止用异常做常规控制流
-
-### 4.5 事务管理
-
-- 多表写入、先写后读一致性要求：`@Transactional(rollbackFor = Exception.class)`
-- 事务方法放在 Spring 管理的 Public 方法上，避免同类自调用导致事务失效
-- 只读查询一般不加写事务；需要时可 `@Transactional(readOnly = true)`（若项目使用）
-
-### 4.6 常用框架速查
-
-| 符号 | 来源 | 作用 |
-|------|------|------|
-| `ServiceImpl` / `Wrappers` | mybatis-plus | CRUD 与条件构造 |
-| `StrUtil` / `CollUtil` / `ObjectUtil` | hutool-core | 空安全工具 |
-| `@Data` / `@RequiredArgsConstructor` | lombok | 样板代码生成 |
-| `@HasPermission` | 项目 security 模块 | 权限 |
-| `R` | 项目 common-core | 统一响应 |
-| `CheckedException` | 项目 common-core | 业务异常 |
-
-### 4.7 参考实现片段
-
-```java
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/project")
-public class ProjectController {
-
-    private final ProjectService projectService;
-
-    @HasPermission("project_projectMain_view")
-    @GetMapping("/{id}")
-    public R<ProjectVO> get(@PathVariable Long id) {
-        return R.ok(projectService.getDetail(id));
-    }
-}
-```
-
-```java
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> implements ProjectService {
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateProject(ProjectDTO dto) {
-        if (dto.getId() == null) {
-            throw new CheckedException("项目ID不能为空");
-        }
-        Project existing = getById(dto.getId());
-        if (existing == null) {
-            throw new CheckedException("项目不存在");
-        }
-        // ... 更新逻辑
-        log.info("更新项目成功, id={}", dto.getId());
-    }
-}
-```
-
----
-
-## 第5部分：TypeScript / Vue 前端编码规范
-
-适用于 Vue 3 + TypeScript；React 等框架时迁移原则不变：类型安全、错误兜底、职责单一。
-
-### 5.1 组件结构
-
-- 优先 `<script setup lang="ts">`
-- 模板 → script → style 顺序清晰；复杂逻辑抽到 `composables/`
-- 一个组件一件事；页面组件负责编排，展示组件负责 UI
-
-### 5.2 API 与错误处理
-
-- 接口集中在 `api/`（或项目约定目录），组件内不散落 URL
-- 每个调用使用 try-catch（或统一封装的错误拦截），给用户可读提示
-- 加载态 / 空态 / 错误态要有着落
-
-```typescript
-async function loadList() {
-  loading.value = true
-  try {
-    const res = await getProjectList(query)
-    list.value = res.data ?? []
-  } catch (e) {
-    console.error(e)
-    // 使用项目既有的 message / notification 组件提示
-  } finally {
-    loading.value = false
-  }
-}
-```
-
-### 5.3 状态管理
-
-- 跨页面共享状态用 Pinia（或项目既有方案）
-- 局部 UI 状态留在组件内（`ref` / `reactive`）
-- 禁止直接修改 props；用 `emit` 或回调上抛
-
-### 5.4 类型定义
-
-- 类型集中在 `types/`（或与模块同目录的 `types.ts`）
-- 禁止随意 `any`；确需时写注释说明原因
-- Props / Emits / API 响应都要有明确类型
-
----
-
-## 第6部分：异常兜底检查清单（R4）
-
-生成或修改代码时，逐项考虑：
-
-| 检查项 | 说明 |
-|--------|------|
-| 参数非空校验 | Controller/DTO：`@NotNull` / `@NotBlank` 等；Service：关键参数再防一层 |
-| 存在性校验 | update / delete 前先查，记录不存在则业务异常 |
-| 唯一性校验 | 新增/修改查重；修改时用 `ne` 排除自身 |
-| 事务回滚 | 多表写：`@Transactional(rollbackFor = Exception.class)` |
-| 日志记录 | 关键路径 `log.info`；失败 `log.warn` / `log.error`，带业务键 |
-| 资源释放 | IO / 流 / 连接用 try-with-resources 或等价 finally |
-| 输入校验 | 前端表单校验 + 后端再校验，不信任前端 |
-| 空值处理 | 集合/可选值避免 NPE；前端可选链与默认值 |
-| 并发安全 | 共享可变状态有策略（版本号、锁、DB 约束等，按场景） |
-| 权限与安全 | 接口鉴权；防 SQL 拼接注入；防 XSS；密钥不进仓库 |
-
----
-
-## 第7部分：Code Review 自检流程（★必须执行★）
-
-### 触发时机
-
-**代码生成或修改完成后、向用户交付之前**，必须执行本流程。不得跳过。
-
-### 执行步骤
-
-1. 对照下方清单与当前语言章节审查刚写的代码（【若标注 Profile 已开启】同时对照 `profiles/line-annotations.md`）
-2. 发现问题立即修正
-3. 修正后再快速扫一遍
-4. 全部通过后才输出最终结果；可在回复中用极简列表说明已自检（无需长篇报告）
-
-### Java 后端自检清单
-
-| 检查项 | 通过标准 |
-|--------|----------|
-| 分层正确 | Controller 只接参与包装响应；业务在 Service；数据访问在 Mapper |
-| 异常完整 | 可能为 null 的返回有处理；写操作有事务或明确错误路径 |
-| 注释标注 | 【若标注 Profile 已开启】外部类/方法调用处有「来源 + 作用 + 位置」标注 |
-| 命名规范 | 与项目现有风格一致 |
-| 事务边界 | 多表写有 `@Transactional(rollbackFor = Exception.class)` |
-| 日志覆盖 | 关键步骤有 info；异常有 error/warn |
-| 无冗余 | 无废变量、多余转换、可扁平化的嵌套 |
-
-### TypeScript 前端自检清单
-
-| 检查项 | 通过标准 |
-|--------|----------|
-| 类型安全 | 无无必要 `any`；Props/Emits/API 类型完整 |
-| API 错误处理 | 有 try-catch 或统一拦截，并有用户提示 |
-| 职责单一 | 复杂逻辑在 composable；组件不臃肿 |
-| 注释标注 | 【若标注 Profile 已开启】关键 import / 外部调用有标注 |
-| 响应式正确 | `ref`/`reactive` 使用正确；不直接改 props |
-| UI 边界 | 加载 / 空 / 错误 / 边界数据有处理 |
-
-### 通用自检清单
-
-| 检查项 | 通过标准 |
-|--------|----------|
-| 无硬编码 | 魔法值进常量/枚举/配置 |
-| 可读性 | 命名即可表达意图 |
-| 可测试性 | 职责单一、依赖可替换 |
-| 安全性 | 无注入/XSS；敏感信息未硬编码 |
-| 性能 | 无 N+1；无无必要嵌套循环；大列表有分页或虚拟化 |
-| 可扩展 | 预留扩展点合理，不做过度设计（R5） |
-
----
-
-## 第8部分：扩展机制（R5 / R6）
-
-本 Skill 按章节或 Profile 扩展，新增规则时：
+新增规则时：
 
 | 规则类型 | 添加到 |
 |----------|--------|
-| 语言无关的质量/气味规则 | 第2部分 |
-| 行尾来源标注（及其他可选能力） | `profiles/` + 顶部 Profile 表 |
-| Java / Spring / MyBatis 等 | 第4部分 |
-| TS / Vue / 前端工程化 | 第5部分 |
-| 异常与安全兜底 | 第6部分 |
-| 自检项 | 第7部分（可选能力用【若 … Profile 已开启】） |
+| 语言无关的质量/气味规则 | `shared/universal.md` |
+| Java / Spring / MyBatis 等 | `java/backend.md` |
+| TS / Vue / 前端工程化 | `typescript/frontend.md` |
+| 异常与安全兜底 | `shared/exceptions.md` |
+| 自检项 | `shared/self-review.md` |
+| 行尾来源标注（及其他可选能力） | `profiles/` + 上方 Profile 表 |
 
-### 添加新规则的写法
+添加新 Profile 时：在 `profiles/` 新增文件 → 在上方 Profile 表登记 → 默认关闭（省 token）。
 
-1. 用一句话写清**必须做什么 / 禁止做什么**
-2. 给一个**最小示例**
-3. 若需 Agent 每次检查，同步在第 7 部分加一行清单
-4. 保持通用：写「模式」，项目专有类名放在示例里并注明「以当前仓库为准」
-
-### 添加新 Profile
-
-1. 在 `profiles/` 下新增一个 Markdown 文件（一层深，勿再嵌套引用）
-2. 在顶部「可选 Profile」表登记：名称、路径、默认开/关、开启条件
-3. 在第 3 部分或相关章节写清条件引用；自检与快速清单用【若 … Profile 已开启】
-4. 若需项目级开关，约定 `.coding-standard.yaml` 字段并在加载规则中写明
-5. 默认关闭除非有充分理由（避免无谓消耗输入/输出 token）
-
-### 跨平台使用
+## 跨平台使用
 
 | 平台 | 用法 |
 |------|------|
@@ -377,17 +87,16 @@ async function loadList() {
 | Claude Code | 将正文纳入 `CLAUDE.md` 或项目 Skill |
 | Copilot | 可将精简版写入 `.github/copilot-instructions.md` |
 
-内容为纯 Markdown，迁移时保留 YAML frontmatter 或按目标平台要求微调即可。
+## 快速执行清单
 
----
-
-## 快速执行清单（每次编码任务）
-
-1. [ ] 阅读本 Skill（至少第2、6、7 部分 + 对应语言章节）
-2. [ ] 按「可选 Profile」规则：需要时 Read `profiles/line-annotations.md`，否则跳过
-3. [ ] 查看项目同层现有代码，对齐风格
-4. [ ] 若属新功能/修 bug/改行为：按 `test-driven-development` 走 Red → Green → Refactor
-5. [ ] 实现功能（直截了当，无冗余）；需要理清结构时用 `code-simplification`
-6. [ ] 【若标注 Profile 已开启】外部依赖补齐行尾标注
-7. [ ] 按第7部分自检并修正
-8. [ ] 交付最终代码
+1. [ ] 声明「正在按 coding-standard 生成/修改代码」
+2. [ ] Read `shared/universal.md`
+3. [ ] 按语言 Read `java/backend.md` 或 `typescript/frontend.md`
+4. [ ] 扫一眼 `shared/exceptions.md` 兜底点
+5. [ ] 按 Profile 规则：需要时 Read `profiles/line-annotations.md`，否则跳过
+6. [ ] 查看项目同层现有代码，对齐风格
+7. [ ] 若属新功能/修 bug/改行为：按 `test-driven-development` 走 Red → Green → Refactor
+8. [ ] 实现功能（直截了当，无冗余）；需要理清结构时用 `code-simplification`
+9. [ ] 【若标注 Profile 已开启】外部依赖补齐行尾标注
+10. [ ] Read `shared/self-review.md` 并按清单逐项自检
+11. [ ] 交付最终代码

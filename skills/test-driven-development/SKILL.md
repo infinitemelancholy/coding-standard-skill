@@ -369,3 +369,9 @@ Otherwise → not TDD
 ```
 
 No exceptions without your human partner's permission.
+
+## 与同仓 Skill 的协同
+
+本技能负责 Red-Green-Refactor 流程。代码质量兜底（命名规范、异常处理、分层职责、自检清单）由同仓 `coding-standard` 负责。
+生成/修改代码时，本技能与 `coding-standard` 同时生效——TDD 管流程，coding-standard 管交付规范。
+如需在不改行为的前提下简化代码结构，配合同仓 `code-simplification` 使用。

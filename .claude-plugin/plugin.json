@@ -1,0 +1,8 @@
+{
+  "name": "coding-standard-skills",
+  "skills": [
+    "./skills/coding-standard",
+    "./skills/test-driven-development",
+    "./skills/code-simplification"
+  ]
+}

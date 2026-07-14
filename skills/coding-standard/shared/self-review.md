@@ -22,6 +22,7 @@
 | 事务边界 | 多表写有 `@Transactional(rollbackFor = Exception.class)` |
 | 日志覆盖 | 关键步骤有 info；异常有 error/warn |
 | 无冗余 | 无废变量、多余转换、可扁平化的嵌套 |
+| 简化表达 | 无深层嵌套、无可合并的 if-else、无手工 for 替代 Stream |
 
 ## TypeScript 前端自检清单
 
@@ -33,6 +34,7 @@
 | 注释标注 | 【若标注 Profile 已开启】关键 import / 外部调用有标注 |
 | 响应式正确 | `ref`/`reactive` 使用正确；不直接改 props |
 | UI 边界 | 加载 / 空 / 错误 / 边界数据有处理 |
+| 简化表达 | 无深层嵌套、无冗余 async/await、无手工 for 替代 filter/map |
 
 ## 通用自检清单
 

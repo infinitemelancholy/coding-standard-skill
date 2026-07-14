@@ -110,3 +110,148 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
 }
 ```
+
+## 反面教材与修正对照
+
+> 每组对照以 `// ❌` 标记反面、`// ✅` 标记修正，行为不变，仅提升可读性。
+
+### 深层嵌套 → Guard Clause 提前返回
+
+```java
+// ❌ 深层嵌套：正常路径被埋在 else 深处
+public void processOrder(Order order) {
+    if (order != null) {
+        if (order.getStatus() == OrderStatus.PENDING) {
+            if (order.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                doProcess(order);
+            } else {
+                throw new CheckedException("订单金额无效");
+            }
+        } else {
+            throw new CheckedException("订单状态不允许操作");
+        }
+    } else {
+        throw new CheckedException("订单不能为空");
+    }
+}
+
+// ✅ Guard clause：异常路径先抛出，正常路径在最外层
+public void processOrder(Order order) {
+    if (order == null) {
+        throw new CheckedException("订单不能为空");
+    }
+    if (order.getStatus() != OrderStatus.PENDING) {
+        throw new CheckedException("订单状态不允许操作");
+    }
+    if (order.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        throw new CheckedException("订单金额无效");
+    }
+    doProcess(order);
+}
+```
+
+### 手工集合构建 → Stream API
+
+```java
+// ❌ 手工 for-if-add：啰嗦，意图不直接
+List<ProjectVO> activeProjects = new ArrayList<>();
+for (Project project : projectList) {
+    if (project.getStatus() == ProjectStatus.ACTIVE) {
+        ProjectVO vo = new ProjectVO();
+        vo.setId(project.getId());
+        vo.setName(project.getName());
+        activeProjects.add(vo);
+    }
+}
+
+// ✅ Stream + map：意图一目了然
+List<ProjectVO> activeProjects = projectList.stream()
+        .filter(p -> p.getStatus() == ProjectStatus.ACTIVE)
+        .map(p -> {
+            ProjectVO vo = new ProjectVO();
+            vo.setId(p.getId());
+            vo.setName(p.getName());
+            return vo;
+        })
+        .collect(Collectors.toList());
+```
+
+### 冗长条件赋值 → 三目 / Optional
+
+```java
+// ❌ if-else 赋值：三行干一行的事
+String displayName;
+if (user.getNickname() != null) {
+    displayName = user.getNickname();
+} else {
+    displayName = user.getUsername();
+}
+
+// ✅ 三目：一行表达
+String displayName = user.getNickname() != null ? user.getNickname() : user.getUsername();
+
+// ✅ 或 Optional（适合链式判空场景）
+String displayName = Optional.ofNullable(user.getNickname()).orElse(user.getUsername());
+```
+
+### 散落的重复校验 → 抽取方法
+
+```java
+// ❌ 校验逻辑在 add 和 update 两处重复粘贴
+public void addProject(ProjectDTO dto) {
+    if (StrUtil.isBlank(dto.getName())) {
+        throw new CheckedException("项目名称不能为空");
+    }
+    if (dto.getName().length() > 100) {
+        throw new CheckedException("项目名称不能超过100字");
+    }
+    // ... 新增逻辑
+}
+
+public void updateProject(ProjectDTO dto) {
+    if (StrUtil.isBlank(dto.getName())) {
+        throw new CheckedException("项目名称不能为空");
+    }
+    if (dto.getName().length() > 100) {
+        throw new CheckedException("项目名称不能超过100字");
+    }
+    // ... 更新逻辑
+}
+
+// ✅ 抽取私有校验方法，单一来源
+public void addProject(ProjectDTO dto) {
+    validateProjectName(dto.getName());
+    // ... 新增逻辑
+}
+
+public void updateProject(ProjectDTO dto) {
+    validateProjectName(dto.getName());
+    // ... 更新逻辑
+}
+
+private void validateProjectName(String name) {
+    if (StrUtil.isBlank(name)) {
+        throw new CheckedException("项目名称不能为空");
+    }
+    if (name.length() > 100) {
+        throw new CheckedException("项目名称不能超过100字");
+    }
+}
+```
+
+### 冗余布尔逻辑 → 直接返回表达式
+
+```java
+// ❌ 多余的 if-true-else-false
+public boolean isProjectActive(Project project) {
+    if (project.getStatus() == ProjectStatus.ACTIVE && !project.getDeleted()) {
+        return true;
+    }
+    return false;
+}
+
+// ✅ 直接返回布尔表达式
+public boolean isProjectActive(Project project) {
+    return project.getStatus() == ProjectStatus.ACTIVE && !project.getDeleted();
+}
+```

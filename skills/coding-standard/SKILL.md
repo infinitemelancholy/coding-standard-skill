@@ -31,7 +31,7 @@ description: >-
 
 激活时按以下顺序 Read 子文件：
 
-1. **必读** `shared/universal.md` —— 通用编码质量标准（禁止模式、要求模式、代码气味）
+1. **必读** `shared/universal.md` —— 通用编码质量标准（禁止模式、要求模式、代码常见问题）
 2. **按语言选读**：
    - Java 后端 → `java/backend.md`
    - TypeScript / Vue 前端 → `typescript/frontend.md`
@@ -75,7 +75,7 @@ annotations: true
 
 | 规则类型 | 添加到 |
 |----------|--------|
-| 语言无关的质量/气味规则 | `shared/universal.md` |
+| 语言无关的质量/常见问题规则 | `shared/universal.md` |
 | Java / Spring / MyBatis 等 | `java/backend.md` |
 | TS / Vue / 前端工程化 | `typescript/frontend.md` |
 | 异常与安全兜底 | `shared/exceptions.md` |

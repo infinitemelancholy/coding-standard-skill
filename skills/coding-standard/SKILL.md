@@ -46,16 +46,26 @@ description: >-
 | Profile | 文件 | 默认 | 开启条件 |
 |---------|------|------|----------|
 | `line-annotations` | `profiles/line-annotations.md` | 关闭 | 见下方 |
+| `interview-questions` | `profiles/interview-questions.md` | 关闭 | 见下方 |
 
-**加载规则：**
+### `line-annotations` 加载规则
+
 1. 检测项目根目录是否存在 `.coding-standard.yaml`，且 `annotations: true`
 2. 或用户口头要求开启标注（如「按 coding-standard 开启标注」）
 3. 满足任一条件 → Read 加载 `profiles/line-annotations.md` 并执行其规则
 4. 否则 → **不加载**，**不生成**行尾来源标注；自检跳过标注相关项
 
+### `interview-questions` 加载规则
+
+1. 检测项目根目录是否存在 `.coding-standard.yaml`，且 `interview-questions: true`
+2. 或用户口头要求开启（如「按 coding-standard 开启面试深挖」「生成面经」「面试深挖」）
+3. 满足任一条件 → Read 加载 `profiles/interview-questions.md` 并执行其规则
+4. 否则 → **不加载**，不生成面经；自检跳过面试深挖相关项
+
 ```yaml
 # 项目根目录 .coding-standard.yaml
 annotations: true
+interview-questions: true
 ```
 
 ## 同仓协作 Skills
@@ -80,7 +90,7 @@ annotations: true
 | TS / Vue / 前端工程化 | `typescript/frontend.md` |
 | 异常与安全兜底 | `shared/exceptions.md` |
 | 自检项 | `shared/self-review.md` |
-| 行尾来源标注（及其他可选能力） | `profiles/` + 上方 Profile 表 |
+| 行尾来源标注、面试深挖（及其他可选能力） | `profiles/` + 上方 Profile 表 |
 
 添加新 Profile 时：在 `profiles/` 新增文件 → 在上方 Profile 表登记 → 默认关闭（省 token）。
 
@@ -99,10 +109,11 @@ annotations: true
 2. [ ] Read `shared/universal.md`
 3. [ ] 按语言 Read `java/backend.md` 或 `typescript/frontend.md`
 4. [ ] 扫一眼 `shared/exceptions.md` 兜底点
-5. [ ] 按 Profile 规则：需要时 Read `profiles/line-annotations.md`，否则跳过
+5. [ ] 按 Profile 规则：需要时 Read `profiles/line-annotations.md` / `profiles/interview-questions.md`，否则跳过
 6. [ ] 查看项目同层现有代码，对齐风格
 7. [ ] 若属新功能/修 bug/改行为：按 `test-driven-development` 走 Red → Green → Refactor
 8. [ ] 实现功能（直截了当，无冗余）；需要理清结构时用 `code-simplification`
 9. [ ] 【若标注 Profile 已开启】外部依赖补齐行尾标注
 10. [ ] Read `shared/self-review.md` 并按清单逐项自检
 11. [ ] 交付最终代码
+12. [ ] 【若面试深挖 Profile 已开启】交付代码后，基于本次改动生成面试深挖面经

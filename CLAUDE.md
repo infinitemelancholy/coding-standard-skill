@@ -17,13 +17,18 @@
 
 ## Profile 机制（coding-standard）
 
-`coding-standard` 内含可选 Profile——行尾来源标注。**默认关闭**以节省 token。
+`coding-standard` 内含两个可选 Profile，**默认关闭**以节省 token：
+
+| Profile | 说明 |
+|---------|------|
+| `line-annotations` | 行尾来源标注——对外部依赖在行尾做来源注释 |
+| `interview-questions` | 面试深挖——代码交付后生成大厂面试题与面经 |
 
 开启条件（激活 `coding-standard` 时检查）：
-1. 项目根目录存在 `.coding-standard.yaml` 且 `annotations: true`
-2. 或用户口头要求（如「按 coding-standard 开启标注」）
-3. 满足任一条件 → Read 加载 `profiles/line-annotations.md` 并执行其规则
-4. 否则 → 不加载，不生成行尾标注，自检时跳过标注相关项
+1. 项目根目录存在 `.coding-standard.yaml` 且对应配置项为 `true`
+2. 或用户口头要求（如「按 coding-standard 开启标注」/「按 coding-standard 开启面试深挖」）
+3. 满足任一条件 → Read 加载对应 Profile 文件并执行其规则
+4. 否则 → 不加载，自检时跳过相关项
 
 ## 仓库结构
 
@@ -41,7 +46,8 @@ skills/
 │   ├── typescript/
 │   │   └── frontend.md       # TypeScript/Vue 前端编码规范
 │   └── profiles/
-│       └── line-annotations.md  # 可选：开启后才加载
+│       ├── line-annotations.md     # 可选：开启后才加载
+│       └── interview-questions.md  # 可选：开启后才加载
 ├── test-driven-development/
 │   ├── SKILL.md              # Red-Green-Refactor 流程
 │   ├── testing-anti-patterns.md

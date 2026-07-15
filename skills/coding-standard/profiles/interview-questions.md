@@ -87,7 +87,7 @@ interview-questions: true
 | 本次涉及的技术点 | 可能被问的方向 |
 |-----------------|---------------|
 | Vue 框架 | 响应式原理、虚拟 DOM、diff 算法、生命周期、Composition API |
-| TypeScript 类型系统 | 泛型约束、条件类型、类型体操、类型推导边界 |
+| TypeScript 类型系统 | 泛型约束、条件类型、高级类型用法、类型推导边界 |
 | 前端工程化 | Vite/Webpack 配置、Tree Shaking、Code Splitting |
 | 浏览器基础 | 事件循环、渲染流程、跨域方案、存储方案对比 |
 | CSS / 样式方案 | BFC、Flex/Grid 布局、CSS Modules / Scoped 原理 |

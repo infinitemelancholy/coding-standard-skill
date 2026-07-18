@@ -1,6 +1,10 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code
+description: >-
+  Enforces red-green-refactor TDD: write a failing test first, watch it fail,
+  then write minimal implementation. Use when implementing features, bug fixes,
+  behavior changes, or when the user mentions TDD, test-first, red-green-refactor,
+  or writing tests before code.
 ---
 
 # Test-Driven Development (TDD)

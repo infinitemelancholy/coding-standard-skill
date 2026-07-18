@@ -17,6 +17,65 @@
 | 复制粘贴膨胀 | 重复逻辑应抽私有方法或工具，而不是整段拷贝 |
 | 过早优化 | 无证据的缓存、异步、复杂设计模式 |
 
+## 正反例（关键禁止项）
+
+**冗余封装**
+
+```text
+Bad:  ServiceA.save → Wrapper.save → ServiceB.save（Wrapper 无校验/无编排）
+Good: ServiceA 直接调 ServiceB，或 Wrapper 内确有规则/事务边界
+```
+
+**兜圈子实现**
+
+```text
+Bad:  for (x : list) { if (!ok(x)) continue; out.add(x); }
+Good: list.stream().filter(this::ok).toList()  // 或项目等价写法
+```
+
+**「AI 味」命名 / 废话注释**
+
+```text
+Bad:  // 获取用户  tmpUserData = getUserDataById(id);
+Good: user = findById(id);
+```
+
+**复制粘贴膨胀**
+
+```text
+Bad:  三处几乎相同的 DTO→Entity 赋值块
+Good: 抽 private toEntity(dto) 或复用项目 MapStruct/BeanUtil
+```
+
+**过早优化**
+
+```text
+Bad:  无 profiling 证据就加本地缓存 + 异步线程池「提升性能」
+Good: 先正确实现；有度量或明确 SLA 后再优化
+```
+
+## 合理化借口（必须拒绝）
+
+| 借口 | 正确做法 |
+|------|----------|
+| 「先把功能写完，规范以后再改」 | 交付前必须过 `shared/self-review.md`；不过检不算完成 |
+| 「只是小改动，不用对齐分层」 | 再小也要落在正确层；禁止 Controller 塞业务 |
+| 「项目里暂时没有统一异常，先 catch 空着」 | 禁止空 catch；用项目业务异常或显式失败路径 |
+| 「any / 魔法值先顶上」 | 补类型或常量；确需 any 必须注释原因 |
+| 「和现有文件不一致但我觉得更好」 | 先对齐同层现有风格（R1），再提议改进 |
+| 「示例太长，跳过自检」 | 自检不可跳过；可极简列出已检项 |
+
+## Red Flags — 停下并返工
+
+出现任一情况，**停止交付**，修正后再自检：
+
+- Controller / 页面组件里出现业务规则或直接 Mapper / 散落 URL
+- `catch (Exception e) {}` 或吞掉异常只返回成功
+- 多表写无事务，或 update/delete 前不校验存在性
+- 新代码充满无意义中间变量、复述型注释、与模块风格冲突的命名
+- 未读同层现有文件就「发明」一套新分层/响应包装
+- 宣称完成但未执行 `shared/self-review.md` 清单
+
 ## 要求模式
 
 - 直截了当：每一步对应明确业务含义

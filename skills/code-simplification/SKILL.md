@@ -1,6 +1,10 @@
 ---
 name: code-simplification
-description: Simplifies code for clarity. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity.
+description: >-
+  Simplifies working code for clarity without changing behavior—flatten nests,
+  remove dead wrappers, clarify names. Use when refactoring for readability,
+  cleaning complex or rushed code, reviewing unnecessary complexity, or when
+  the user asks to simplify, declutter, or make code easier to maintain.
 ---
 
 # Code Simplification

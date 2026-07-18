@@ -29,6 +29,32 @@ async function loadList() {
 }
 ```
 
+**Bad — 组件内散落 URL、滥用 any、直接改 props**
+
+```typescript
+async function load(props: any) {
+  const res = await fetch('/api/project/list?id=' + props.id)
+  props.list = await res.json() // 直接改 props
+}
+```
+
+**Good — API 集中、类型明确、状态本地或上抛**
+
+```typescript
+async function loadList(projectId: number) {
+  loading.value = true
+  try {
+    const res = await getProjectList({ projectId })
+    list.value = res.data ?? []
+  } catch (e) {
+    console.error(e)
+    // message.error(...)
+  } finally {
+    loading.value = false
+  }
+}
+```
+
 ## 状态管理
 
 - 跨页面共享状态用 Pinia（或项目既有方案）

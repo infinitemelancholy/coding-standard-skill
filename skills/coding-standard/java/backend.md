@@ -53,6 +53,42 @@
 - 不要吞异常；记录日志时带上下文（关键 id、操作名）
 - 禁止 `catch (Exception e) {}` 空块；禁止用异常做常规控制流
 
+## 正反例：分层与异常
+
+**Bad — Controller 塞业务 + 空 catch**
+
+```java
+@PostMapping
+public R<Void> save(@RequestBody ProjectDTO dto) {
+    try {
+        if (projectMapper.selectByName(dto.getName()) != null) {
+            return R.failed("重名");
+        }
+        projectMapper.insert(toEntity(dto));
+    } catch (Exception e) {
+    }
+    return R.ok();
+}
+```
+
+**Good — Controller 薄、业务与异常在 Service**
+
+```java
+@PostMapping
+public R<Void> save(@RequestBody @Valid ProjectDTO dto) {
+    projectService.saveProject(dto);
+    return R.ok();
+}
+
+// ServiceImpl
+public void saveProject(ProjectDTO dto) {
+    if (baseMapper.selectByName(dto.getName()) != null) {
+        throw new CheckedException("项目名称已存在");
+    }
+    save(toEntity(dto));
+}
+```
+
 ## 事务管理
 
 - 多表写入、先写后读一致性要求：`@Transactional(rollbackFor = Exception.class)`

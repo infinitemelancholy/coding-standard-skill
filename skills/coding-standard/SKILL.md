@@ -1,9 +1,10 @@
 ---
 name: coding-standard
 description: >-
-  通用编码质量守门人。在生成、修改、重构任何 Java 后端或 TypeScript/Vue 前端代码之前必须阅读并遵守；
-  生成后必须对照自检清单逐项 Code Review，修正后再输出。
-  触发场景：写代码、改 bug、加接口、加组件、重构、code review、实现功能、生成样板代码。
+  Enforces naming, layering, exception handling, and delivery checklists for
+  Java/Spring and TypeScript/Vue code. Use when writing, modifying, refactoring,
+  reviewing, or generating backend/frontend code, Controllers, Services, APIs,
+  components, or when the user asks to follow coding standards.
 ---
 
 # 通用编码技能（Coding Standard）
@@ -27,11 +28,17 @@ description: >-
 - 修复 bug、补异常处理、补注释
 - 用户说「按规范写」「生成代码」「实现某某功能」
 
+## 何时不激活（避免误触发）
+
+- 仅解释/阅读代码、答概念题、画架构，**不修改仓库**
+- 纯文档/文案/提交说明，且无代码变更
+- 用户明确只要 `code-simplification` 或 `test-driven-development` 流程、且未要求按本规范交付时：仍以对应用户意图为准；一旦动手改代码并交付，仍须过自检清单
+
 ## 加载规则
 
 激活时按以下顺序 Read 子文件：
 
-1. **必读** `shared/universal.md` —— 通用编码质量标准（禁止模式、要求模式、代码常见问题）
+1. **必读** `shared/universal.md` —— 通用编码质量标准（禁止模式、正反例、合理化借口、Red Flags）
 2. **按语言选读**：
    - Java 后端 → `java/backend.md`
    - TypeScript / Vue 前端 → `typescript/frontend.md`
@@ -94,6 +101,8 @@ interview-questions: true
 
 添加新 Profile 时：在 `profiles/` 新增文件 → 在上方 Profile 表登记 → 默认关闭（省 token）。
 
+添加规则写法：一句话写清必须/禁止 → 给最小示例 → 需要每次检查则同步写入 `shared/self-review.md`。
+
 ## 跨平台使用
 
 | 平台 | 用法 |
@@ -106,7 +115,7 @@ interview-questions: true
 ## 快速执行清单
 
 1. [ ] 声明「正在按 coding-standard 生成/修改代码」
-2. [ ] Read `shared/universal.md`
+2. [ ] Read `shared/universal.md`（含正反例、合理化借口、Red Flags）
 3. [ ] 按语言 Read `java/backend.md` 或 `typescript/frontend.md`
 4. [ ] 扫一眼 `shared/exceptions.md` 兜底点
 5. [ ] 按 Profile 规则：需要时 Read `profiles/line-annotations.md` / `profiles/interview-questions.md`，否则跳过
@@ -114,6 +123,6 @@ interview-questions: true
 7. [ ] 若属新功能/修 bug/改行为：按 `test-driven-development` 走 Red → Green → Refactor
 8. [ ] 实现功能（直截了当，无冗余）；需要理清结构时用 `code-simplification`
 9. [ ] 【若标注 Profile 已开启】外部依赖补齐行尾标注
-10. [ ] Read `shared/self-review.md` 并按清单逐项自检
+10. [ ] Read `shared/self-review.md` 并按清单逐项自检（对照 Red Flags，拒绝合理化借口）
 11. [ ] 交付最终代码
 12. [ ] 【若面试深挖 Profile 已开启】交付代码后，基于本次改动生成面试深挖面经
